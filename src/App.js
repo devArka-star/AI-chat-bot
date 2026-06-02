@@ -7,7 +7,7 @@ import Footer from './MyComponents/Footer';
 import ChatWidgetDashboard from './MyComponents/ChatWidgetDashboard'; 
 import Login from './MyComponents/Login'; 
 import Register from './MyComponents/Register'; 
-import backgroundImage from './img/wp12314608.jpg';
+import backgroundImage from './img/IMG_20260602_222952.jpg';
 
 function App() {
   const [currentView, setCurrentView] = useState('landing');

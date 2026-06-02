@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import './Hero.css'; 
-import chatbotImg from '../img/wp12314608.jpg'; 
+
 
 function Hero({ onStartChat }) {
   return (
