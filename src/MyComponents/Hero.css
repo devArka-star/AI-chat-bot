@@ -1,0 +1,15 @@
+.hero-section {
+  min-height: calc(100vh - 80px); /* Adjusts height beautifully around navbar */
+}
+
+.hero-title {
+  font-size: 4.5rem;
+  font-weight: 800;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5); /* Adds a shadow so title is readable over any image */
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);  /* Enhances text readability */
+}

@@ -1,0 +1,67 @@
+/* --- SHARED VIEWPORT (LOGIN & REGISTER BOTH CAN USE) --- */
+.login-page-viewport {
+  min-height: 100vh;
+  width: 100vw;
+  background: radial-gradient(circle at center, #1e295d 0%, #0d1333 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* --- LOGIN GLASS CARD --- */
+.login-glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  width: 100% !important;
+  max-width: 740px !important;           
+  min-height: 460px !important;          
+  margin: 0 auto !important;             
+  
+  overflow: hidden;
+}
+
+/* --- SIGN IN BUTTONS --- */
+.signin-btn {
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.signin-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.social-icon-btn {
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s;
+}
+
+.social-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.extra-small {
+  font-size: 0.75rem;
+}
+
+/* --- MASCOT ANIMATION FOR LOGIN --- */
+.mascot-image {
+  animation: floatMascot 4s ease-in-out infinite;
+}
+
+@keyframes floatMascot {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}

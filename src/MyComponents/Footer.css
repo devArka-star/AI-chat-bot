@@ -1,0 +1,39 @@
+.custom-footer {
+  background-color: #0d0f12; /* Premium deep black/grey tone background */
+  font-family: sans-serif;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-text {
+  color: #94a3b8; /* Soft muted gray text color */
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.tracking-wider {
+  letter-spacing: 1px;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.footer-links a:hover {
+  color: #ffffff; /* Turns clean bright white on hover */
+}
+
+.footer-divider {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.footer-bottom-text {
+  color: #64748b;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,80 @@
+/* --- THE ULTRA-COMPACT REGISTRATION CONTAINER --- */
+.register-exact-card {
+  background-color: #0f1b33 !important; 
+  width: 100% !important;
+  max-width: 740px !important;           
+  min-height: 460px !important;          
+  margin: 0 auto !important;             
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden;
+}
+
+/* --- STREAMLINED MODERN AVATAR SELECTOR --- */
+.avatar-upload-wrapper {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  margin: 0 auto 12px auto; /* Centers the profile picker gracefully */
+  cursor: pointer;
+}
+
+.profile-preview-circle {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid #2563eb;
+  background-color: #1f2937;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.avatar-upload-wrapper:hover .profile-preview-circle {
+  transform: scale(1.03);
+  border-color: #3b82f6;
+}
+
+/* Subtle overlay indicator badge */
+.upload-badge-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #2563eb;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* --- TIGHT INPUT FORM MANAGEMENT --- */
+.dark-input-field {
+  background-color: #1f2937 !important; 
+  border: 1px solid #374151 !important;
+  color: #ffffff !important;
+  font-size: 0.85rem !important;
+  width: 100% !important;              
+}
+
+.mascot-fit-image {
+  max-width: 90%;
+  height: auto;
+  object-fit: contain;
+  animation: registerFloat 4s ease-in-out infinite; 
+}
+
+@keyframes registerFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.social-borderless-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: none !important;
+  padding: 6px 12px;
+}
