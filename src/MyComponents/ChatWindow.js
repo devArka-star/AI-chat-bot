@@ -1,30 +1,37 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown';
+import api from '../api'; 
 
 function ChatWindow({ botName, selectedLanguage, onCloseChat, botAvatar, chatId }) {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const messageEndRef = useRef(null);
 
-  // Load chat history when chatId changes or component mounts
+  // Use the correct environment variable access
+  // If using Vite, use import.meta.env.VITE_API_BASE_URL
+  // If using Create React App, use process.env.REACT_APP_API_BASE_URL
+  const API_URL = process.env.REACT_APP_API_BASE_URL || "";
+
   useEffect(() => {
-    if (chatId) {
-      fetch(`http://localhost:5000/api/recent-chats/details/${chatId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.messages) {
-            setMessages(data.messages);
+    const fetchChatHistory = async () => {
+      if (chatId) {
+        try {
+          const response = await api.get(`/api/recent-chats/details/${chatId}`);
+          if (response.data && response.data.messages) {
+            setMessages(response.data.messages);
           }
-        })
-        .catch(err => console.error("Error loading chat:", err));
-    } else {
-      // Default welcome message if no chat is active
-      setMessages([{ id: 1, sender: 'bot', text: `Hi there! 👋 How can I help you in ${selectedLanguage} today?` }]);
-    }
+        } catch (err) {
+          console.error("Error loading chat:", err);
+        }
+      } else {
+        setMessages([{ id: 1, sender: 'bot', text: `Hi there! 👋 How can I help you in ${selectedLanguage} today?` }]);
+      }
+    };
+
+    fetchChatHistory();
   }, [chatId, selectedLanguage]);
 
-  // Auto-scroll to bottom of chat
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -36,34 +43,25 @@ function ChatWindow({ botName, selectedLanguage, onCloseChat, botAvatar, chatId 
     const currentInput = inputMessage;
     const userMsg = { id: Date.now(), sender: 'user', text: currentInput };
     
-    // Update local state immediately for responsiveness
     setMessages((prev) => [...prev, userMsg]);
     setInputMessage('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: currentInput, 
-          chatId: chatId // REQUIRED: Sends the active ID to backend for persistence
-        })
+      // API call using the centralized instance
+      const response = await api.post('/api/chat', { 
+        message: currentInput, 
+        chatId: chatId 
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        const botResponse = {
-          id: Date.now() + 1,
-          sender: 'bot',
-          text: data.reply
-        };
-        setMessages((prev) => [...prev, botResponse]);
-      } else {
-        throw new Error(data.error || 'Failed to get AI response');
-      }
+      const data = response.data;
+      const botResponse = {
+        id: Date.now() + 1,
+        sender: 'bot',
+        text: data.reply
+      };
+      setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
-      console.error('AI Communication Error:', error);
+      console.error('AI Communication Error:', error.response || error);
       setMessages((prev) => [...prev, { 
         id: Date.now() + 1, 
         sender: 'bot', 
@@ -78,7 +76,7 @@ function ChatWindow({ botName, selectedLanguage, onCloseChat, botAvatar, chatId 
         <div className="d-flex align-items-center gap-2">
           {botAvatar ? (
             <img 
-              src={`http://localhost:5000${botAvatar}`} 
+              src={`${API_URL}${botAvatar}`} 
               alt={botName} 
               className="rounded-circle" 
               style={{ width: '40px', height: '40px', objectFit: 'cover' }} 
