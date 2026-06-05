@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './ChatWidgetDashboard.css';
 import ChatWindow from './ChatWindow';
-// Import the centralized axios instance
-import api from '../api';
 
 function ChatWidgetDashboard({ user, onBackToHome }) {
   const displayName = user?.name || "Guest User";
   const displayRole = "Admin Account";
 
   const profileImageUrl = user?.profileImage
-    ? `${process.env.REACT_APP_API_BASE_URL}/${user.profileImage.replace(/\\/g, '/')}`
+    ? `http://localhost:5000/${user.profileImage.replace(/\\/g, '/')}`
     : null;
 
   const getUserInitial = (name) => {
@@ -33,54 +31,51 @@ function ChatWidgetDashboard({ user, onBackToHome }) {
   const [avatarFile, setAvatarFile] = useState(null);
 
   useEffect(() => {
-    const loadInitialData = async () => {
-      if (user?.id) {
-        try {
-          const settingsRes = await api.get(`/api/bot-settings/${user.id}`);
-          setBotSettings(settingsRes.data);
-          fetchRecentChats();
-        } catch (err) {
-          console.error("Error loading dashboard data", err);
-        }
-      }
-    };
-    loadInitialData();
+    if (user?.id) {
+      fetch(`http://localhost:5000/api/bot-settings/${user.id}`)
+        .then(res => res.json())
+        .then(data => setBotSettings(data));
+
+      fetchRecentChats();
+    }
   }, [user?.id]);
 
-  const fetchRecentChats = async () => {
+  const fetchRecentChats = () => {
     if (user?.id) {
-      try {
-        const response = await api.get(`/api/recent-chats/${user.id}`);
-        setRecentChats(response.data);
-      } catch (err) {
-        console.error("Error fetching chats", err);
-      }
+      fetch(`http://localhost:5000/api/recent-chats/${user.id}`)
+        .then(res => res.json())
+        .then(data => setRecentChats(data));
     }
   };
 
   const handleNewChat = async () => {
-    try {
-      const response = await api.post('/api/chats', { userId: user.id });
-      setActiveChatId(response.data._id);
-      setIsChatActive(true);
-      fetchRecentChats();
-    } catch (err) {
-      console.error("Error starting new chat", err);
-    }
+    const response = await fetch('http://localhost:5000/api/chats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id })
+    });
+    const newChat = await response.json();
+
+    setActiveChatId(newChat._id);
+    setIsChatActive(true);
+    fetchRecentChats();
   };
 
   const handleSaveSettings = async () => {
     try {
-      await api.put('/api/bot-settings', { ...botSettings, userId: user.id });
+      await fetch('http://localhost:5000/api/bot-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...botSettings, userId: user.id })
+      });
 
       if (avatarFile) {
         const formData = new FormData();
         formData.append('avatar', avatarFile);
         formData.append('userId', user.id);
-        const res = await api.post('/api/bot-settings/avatar', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        setBotSettings(prev => ({ ...prev, avatar: res.data.avatarPath }));
+        const res = await fetch('http://localhost:5000/api/bot-settings/avatar', { method: 'POST', body: formData });
+        const data = await res.json();
+        setBotSettings(prev => ({ ...prev, avatar: data.avatarPath }));
       }
       setActiveTab('chats');
     } catch (err) {
@@ -109,6 +104,7 @@ function ChatWidgetDashboard({ user, onBackToHome }) {
                 <ul className="nav flex-column dashboard-nav gap-2">
                   <li className={`nav-item p-2 rounded ${activeTab === 'chats' ? 'bg-white shadow-sm' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setActiveTab('chats')}>💬 Recent Chats</li>
                   <li className={`nav-item p-2 rounded ${activeTab === 'bot-settings' ? 'bg-white shadow-sm' : ''}`} style={{ cursor: 'pointer' }} onClick={() => setActiveTab('bot-settings')}>⚙️ Bot Settings</li>
+
                 </ul>
 
                 <div className="mt-4 pt-3 border-top">
@@ -146,13 +142,14 @@ function ChatWidgetDashboard({ user, onBackToHome }) {
                       <Form.Group className="mb-2"><Form.Label className="small">Description</Form.Label><Form.Control size="sm" as="textarea" rows={2} value={botSettings.description} onChange={(e) => updateBotSettings('description', e.target.value)} /></Form.Group>
                     </Form>
                   )}
+
                 </div>
               </div>
 
               <div className="user-profile-box p-3 bg-white border rounded-3 mt-4 d-flex align-items-center gap-3 shadow-sm">
                 {profileImageUrl ? (
                   <img
-                    src={`${process.env.REACT_APP_API_BASE_URL}${user.profileImage}`}
+                    src={`http://localhost:5000${user.profileImage}`}
                     alt="Profile"
                     className="profile-img"
                     style={{ width: '50px', borderRadius: '50%' }}
@@ -175,7 +172,7 @@ function ChatWidgetDashboard({ user, onBackToHome }) {
                       <h4 className="fw-bold">Hello, nice to see you here 👋</h4>
                     </div>
                     <div className="p-4 text-center flex-grow-1 d-flex flex-column align-items-center justify-content-center">
-                      <img src={botSettings.avatar ? `${process.env.REACT_APP_API_BASE_URL}${botSettings.avatar}` : 'https://via.placeholder.com/100'} alt="Bot Avatar" className="rounded-circle" style={{ width: '80px', height: '80px', objectFit: 'cover' }} />
+                      <img src={botSettings.avatar ? `http://localhost:5000${botSettings.avatar}` : 'https://via.placeholder.com/100'} alt="Bot Avatar" className="rounded-circle" style={{ width: '80px', height: '80px', objectFit: 'cover' }} />
                       <div className="p-4 text-center w-100 border rounded-4 shadow-sm">
                         <div className="mb-3 fw-bold fs-3">{botSettings.name}</div>
                         <p className="text-muted mb-4">{botSettings.description}</p>
