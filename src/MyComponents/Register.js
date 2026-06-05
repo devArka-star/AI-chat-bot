@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import './Register.css'; 
 import robotPic from '../img/download.png'; 
+// Import the centralized axios instance
+import api from '../api'; 
 
 export default function Register({ onBackToLogin }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [profileImage, setProfileImage] = useState(null);       
-    const [imagePreview, setImagePreview] = useState('');        
+    const [imagePreview, setImagePreview] = useState('');         
     const [agreeTerms, setAgreeTerms] = useState(false);
 
     const handleImageChange = (e) => {
@@ -37,21 +39,21 @@ export default function Register({ onBackToLogin }) {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/register', {
-                method: 'POST',
-                body: formData 
+            // Using the axios instance to make the request
+            const response = await api.post('/api/auth/register', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (response.status === 200 || response.status === 201) {
                 alert('Registration Successful! Redirecting to login...');
                 if (onBackToLogin) onBackToLogin();
-            } else {
-                alert(data.error || 'Registration failed');
             }
         } catch (error) {
-            alert('Could not connect to the backend.');
+            console.error('Registration Error:', error);
+            const errorMessage = error.response?.data?.error || 'Registration failed. Please try again.';
+            alert(errorMessage);
         }
     };
 

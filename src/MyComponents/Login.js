@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
 import robotPic from '../img/download.png';
+// Import the centralized axios instance
+import api from '../api'; 
 
 export default function Login({ onBackToLanding, onCreateAccount, onLoginSuccess }) {
     const [username, setUsername] = useState('');
@@ -12,21 +14,17 @@ export default function Login({ onBackToLanding, onCreateAccount, onLoginSuccess
         console.log("Attempting to connect to backend...");
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: username,
-                    password: password
-                })
+            // Using the axios instance to make the request
+            const response = await api.post('/api/auth/login', {
+                email: username,
+                password: password
             });
 
             console.log("Response status:", response.status);
-            const data = await response.json();
+            // Axios automatically parses the response body, so 'data' is already available
+            const data = response.data;
 
-            if (response.ok) {
+            if (response.status === 200) {
                 alert(`Welcome back, ${data.user.name}!`);
                 
                 localStorage.setItem('token', data.token);
@@ -35,13 +33,12 @@ export default function Login({ onBackToLanding, onCreateAccount, onLoginSuccess
                 if (onLoginSuccess) {
                     onLoginSuccess(data.user); 
                 }
-            } else {
-                console.error("Login failed:", data);
-                alert(data.error || 'Invalid credentials');
             }
         } catch (error) {
             console.error('Frontend Login Networking Error:', error);
-            alert('Server unreachable. Ensure the backend (port 5000) is running and CORS is enabled.');
+            // Handling errors via axios
+            const errorMessage = error.response?.data?.error || 'Server unreachable. Please ensure the backend is running.';
+            alert(errorMessage);
         }
     };
 
